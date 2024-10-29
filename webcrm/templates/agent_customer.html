@@ -2,7 +2,7 @@
 
 {% block content %}
 
-
+<h1>Assinged Leads to {{ customer.first }} {{ customer.last_name }}</h2>
 
 {% if user.is_authenticated %}
 
@@ -15,7 +15,7 @@
       <th scope="col">Phone</th>
       <th scope="col">Email</th>
       <th scope="col">City</th>
-      <th scope="col">Location</th>
+      <th scope="col">Assigned.Town</th>
       <th scope="col">State</th>
       <th scope="col">Created_at</th>
 
@@ -27,47 +27,30 @@
   {% if customers %}
     {% for customer in customers %}
         <tr>
-            <td><a href="{% url 'customer' customer.id %}">{{ customer.id }}</a></td>
-            <td><a href="{% url 'customer' customer.id %}">{{ customer.first_name }}{{ customer.last_name }}</td>
+            <td><a href="{% url  'customer.html' customer.id %}">{{ customer.id }}</a></td>
+            <td>{{ customer.first_name }}{{ customer.last_name }}</td>
             <td>{{ customer.phone }}</td>
             <td>{{ customer.email }}</td>
             <td>{{ customer.city }}</td>
             <td>{{ customer.location }}</td>
             <td>{{ customer.state }}</td>
-            <td>{{ customer.created_at }}</td> 
+            <td>{{ customer.created_at }}</td>
         </tr>
     {% endfor %}
-
-{% endif %}
-
+  {% else %}
+     <tr>
+       <td colspan="6">No customers assigned to this agent.</td>
      </tr>
-       </tbody>
-     </table>
+    {% endif %}
+    </tbody>
+</table>
 
+<a href="{% url 'agent_list' %}" class="btn btn-primary">Back</a>
 
 {% else %}
 
-<div class="col-md-6 offset-md-3">
-<h1>Login</h1>
-<br/>
+<p>Please <a href="{% url 'login' %}">login</a>to view agent detail.</p>
 
-<form method="POST" action="{% url 'home' %}">
-    {% csrf_token %}
-    
-  <div class="mb-3">
-    <input type="text" class="form-control" name="username", placeholder="username" required>
-
-  </div>
-  <div class="mb-3">
-    <input type="password" class="form-control" name="password", placeholder="Password" required>
-  </div>
-  <br/>
-  <button type="submit" class="btn btn-primary">Login</button>
-
-</form>
-
-
-
-{% endif %} 
+{% endif %}
 
 {% endblock %}

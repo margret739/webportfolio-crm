@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Customer
+from .models import Customer, Agent
 
 
 class SignUpForm(UserCreationForm):
@@ -35,6 +35,7 @@ class SignUpForm(UserCreationForm):
 
 
 
+
 # creating Add Customer form
 class AddCustomerForm(forms.ModelForm):
     first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
@@ -47,4 +48,19 @@ class AddCustomerForm(forms.ModelForm):
 
     class Meta:
         model = Customer
+        exclude = ("user",)  
+
+
+# creating Add Agent form
+class AddAgentForm(forms.ModelForm):
+    first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
+    last_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"last Name", "class":"form-control"}), label="")
+    phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Phone", "class":"form-control"}), label="")
+    email = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Email", "class":"form-control"}), label="")
+    city = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"City", "class":"form-control"}), label="")
+    assigned_town = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Location", "class":"form-control"}), label="")
+    state = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"State", "class":"form-control"}), label="")
+
+    class Meta:
+        model = Agent
         exclude = ("user",)

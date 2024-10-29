@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<div class="card">
+    <div class="card-header">
+        {{ agent.first_name }} 
+        {{ agent.last_name }}
+    </div>
+    <div class="card-body">
+        <p class="card-title">
+            <strong>ID: </strong>{{ agent.id }} </br>
+            <strong>Phone: </strong>{{ agent.phone }} </br>
+            <strong>Email: </strong>{{ agent.email }} </br>
+            <strong>City: </strong>{{ agent.city }} </br>
+            <strong>Assigned_town: </strong>{{ agent.assigned_town }} </br>
+            <strong>State: </strong>{{ agent.state }} </br>
+            <strong>Created_at: </strong>{{ agent.created_at }} </br>
+        </p>
+    </div>          
+</div> 
+
+<br/><br/>
+<a href="{% url 'agent' %}" class="btn btn-primary">Back</a>
+
+<a href="{% url 'agent_delete' agent.id %}" class="btn btn-danger">Delete</a>
+
+<a href="{% url 'agent_update' agent.id %}" class="btn btn-primary">Update agent</a>
+
+{% endblock %}
