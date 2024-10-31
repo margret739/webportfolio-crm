@@ -10,10 +10,13 @@
           {% if user.is_authenticated %}
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_customer' %}">Add Customer</a>
+            <a class="nav-link" href="{% url 'add_customer' %}">Customer</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'agent' %}">Agents</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'select_customer' %}">Assign Agents</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>

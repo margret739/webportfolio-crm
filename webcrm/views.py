@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SignUpForm, AddCustomerForm, AddAgentForm
@@ -22,7 +22,7 @@ def home(request):
             messages.success(request, "Error logging in, Please try again...")
             return redirect('home')
     else:
-        return render(request, 'home.html', {'customers':customers})
+        return render(request, 'home.html', {'customers': customers})
 
 
 
@@ -109,9 +109,9 @@ def agent_list(request):
 
 def agent_customer(request, pk):
     if request.user.is_authenticated:
-        agent = Agent.objects.get(id=pk)
+        agents = Agent.objects.get(id=pk)
         customers = Customer.objects.filter(agent=agent)
-        return render(request, 'agent_customers.html', {'agent': agent, 'customers':customers})
+        return render(request, 'agent_customer.html', {'agents': agents, 'customers':customers})
     else:
         messages.success(request, "Login to view this page")
         return redirect('home')
@@ -121,9 +121,7 @@ def add_agent(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             if form.is_valid():
-                if not Agent.objects.filter(user=request.user).exists():
                     add_record = form.save(commit=False)
-                    add_record.user = request.user
                     add_record.save()
                     messages.success(request, "Agent added..")
                     return redirect('agent')
@@ -141,19 +139,19 @@ def agent_detail(request, pk):
         messages.success(request, "Login to view the page..")
         return redirect('home')
 
-def agent_delete(request, pk):
+def agent_delete(request, agent_pk):
     if request.user.is_authenticated:
-        delete_record = Agent.objects.get(id=pk)
+        delete_record = Agent.objects.get(id=agent_pk)
         delete_record.delete()
         messages.success(request, "Record Deleted")
-        return redirect('agent_list')
+        return redirect('agent')
     else:
         messages.success(request, "Login to delete records..")
         return redirect('home')
 
-def agent_update(request, pk):
+def agent_update(request, agent_pk):
     if request.user.is_authenticated:
-        current_agent = Agent.objects.get(id=pk)
+        current_agent = Agent.objects.get(id=agent_pk)
         form = AddAgentForm(request.POST or None, instance=current_agent)
         if form.is_valid():
             form.save()
@@ -162,4 +160,34 @@ def agent_update(request, pk):
         return render(request, 'agent_update.html', {'form':form})
     else:
         messages.success(request, "Login to update..")
+        return redirect('home')
+
+def assign_customer(request, customer_id, agent_id=None):
+    if request.user.is_authenticated:
+        customer = get_object_or_404(Customer, id=customer_id)
+        agents = Agent.objects.all()
+
+        # Assign the agent to the customer
+        if request.method == "POST":
+            agent_id = request.POST.get('agent_id')
+            if agent_id:
+                agent = get_object_or_404(Agent, id=agent_id)
+                customer.agent = agent
+                customer.save()
+                messages.success(request, "Customer assigned!")
+                return redirect('home')
+            else:
+                messages.error(request, "No agent selected for assignment")
+                return redirect('assign_customer', customer_id=customer.id)
+        return render(request, 'assign_customer.html', {'customer': customer, 'agents': agents})
+    else:
+        messages.error(request, "login to assign a lead")
+        return redirect('home')
+
+def select_customer(request):
+    if request.user.is_authenticated:
+        customers = Customer.objects.all()
+        return render(request, 'select_customer.html', {'customers':customers})
+    else:
+        messages.success(request, "Login to select a customer")
         return redirect('home')

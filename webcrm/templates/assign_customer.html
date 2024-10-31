@@ -3,8 +3,21 @@
 {% block content %}
 
 
-
 {% if user.is_authenticated %}
+
+<form method="POST" action="{% url 'assign_customer' customer.id %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="agent">Assign an Agent:</label>
+      <select id="agent_id" name="agent_id" class="form-select form-select-sm" required>
+        <option value="">Select Agent</option>
+        {% for agent in agents %}
+          <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm mt-1">Assign Agent</button>
+</form>
 
 
 <table class="table table-striped table-hover table-bordered table-sm">
@@ -15,7 +28,7 @@
       <th scope="col">Phone</th>
       <th scope="col">Email</th>
       <th scope="col">City</th>
-      <th scope="col">Assigned.Town</th>
+      <th scope="col">Location</th>
       <th scope="col">State</th>
       <th scope="col">Created_at</th>
 
@@ -27,8 +40,8 @@
   {% if customers %}
     {% for customer in customers %}
         <tr>
-            <td><a href="{% url  'customer.html' customer.id %}">{{ customer.agent.id }}</a></td>
-            <td>{{ customer.first_name }}{{ customer.last_name }}</td>
+            <td><a href="{% url  'customer' customer.id %}">{{ customer.id }}</a></td>
+            <td>{{ customer.first_name }} {{ customer.last_name }}</td>
             <td>{{ customer.phone }}</td>
             <td>{{ customer.email }}</td>
             <td>{{ customer.city }}</td>
@@ -45,11 +58,11 @@
     </tbody>
 </table>
 
-<a href="{% url 'agent_list' %}" class="btn btn-primary">Back</a>
+<a href="{% url 'agent' %}" class="btn btn-primary">Back</a>
 
 {% else %}
 
-<p>Please <a href="{% url 'login' %}">login</a>to view agent detail.</p>
+<p>Please <a href="{% url 'login' %}">login</a>to view assign customer.</p>
 
 {% endif %}
 

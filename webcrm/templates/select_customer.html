@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+<h1>Assign leads here:</h1>
+<ul>
+    {% for customer in customers %}
+    <li>
+        <a href="{% url 'assign_customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a>
+    </li>
+    {% empty %}
+    <li> None availabe.</li>
+    {% endfor %}
+</ul>
+
+</div>
+
+<br/><br/>
+<a href="{% url 'agent' %}" class="btn btn-primary">Back</a>
+
+{% endblock %}
