@@ -3,8 +3,26 @@
 {% block content %}
 
 
-
 {% if user.is_authenticated %}
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card text-white bg-primary mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Total leads</h5>
+            <p class="card-text">{{ total_leads }}</p>
+          </div>
+        </div>
+      </div>
+    <div class="col-md-6">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Unassigned</h5>
+          <p class="card-text">{{ total_unassigned}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -20,7 +38,6 @@
       <th scope="col">State</th>
       <th scope="col">Created_at</th>
       <th scope="col">Assigned_Agent</th>
-
     </tr>
   </thead>
   </tbody>
@@ -59,26 +76,7 @@
 
 {% else %}
 
-<div class="col-md-6 offset-md-3">
-<h1>Login</h1>
-<br/>
-
-<form method="POST" action="{% url 'home' %}">
-    {% csrf_token %}
-    
-  <div class="mb-3">
-    <input type="text" class="form-control" name="username", placeholder="username" required>
-
-  </div>
-  <div class="mb-3">
-    <input type="password" class="form-control" name="password", placeholder="Password" required>
-  </div>
-  <br/>
-  <button type="submit" class="btn btn-primary">Login</button>
-
-</form>
-
-
+<p>Please <a href="{% url 'login' %}">login</a>to view dashboard.</p>
 
 {% endif %} 
 

@@ -1,14 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm, AddCustomerForm, AddAgentForm
-from .models import Customer, Agent
+from .forms import SignUpForm, AddCustomerForm, AddAgentForm, OrderForm
+from .models import Customer, Agent, Product, Order
 
 # Create your views here.
 def home(request):
-    customers = Customer.objects.all()
+    if request.user.is_authenticated:
+        customers = Customer.objects.all()
 
-    # check log in
+
+        total_leads = Customer.objects.count()
+        total_unassigned = Customer.objects.filter(agent__isnull=True).count()
+
+        context = {
+            'customers': customers,
+            'total_leads': total_leads,
+            'total_unassigned': total_unassigned,
+        }
+        return render(request, 'home.html', context)
+    else:
+        messages.error(request, "Please login to view dashboard.")
+        return redirect('login') 
+
+def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username', None)
         password = request.POST.get('password')
@@ -20,10 +35,7 @@ def home(request):
             return redirect('home')
         else:
             messages.success(request, "Error logging in, Please try again...")
-            return redirect('home')
-    else:
-        return render(request, 'home.html', {'customers': customers})
-
+    return render(request, 'login.html')
 
 
 def logout_user(request):
@@ -167,6 +179,10 @@ def assign_customer(request, customer_id, agent_id=None):
         customer = get_object_or_404(Customer, id=customer_id)
         agents = Agent.objects.all()
 
+        if customer.agent:
+            messages.error(request, f"{customer.first_name } is already assigned")
+            return redirect('home')
+
         # Assign the agent to the customer
         if request.method == "POST":
             agent_id = request.POST.get('agent_id')
@@ -190,4 +206,47 @@ def select_customer(request):
         return render(request, 'select_customer.html', {'customers':customers})
     else:
         messages.success(request, "Login to select a customer")
+        return redirect('home')
+
+def add_order(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            order_form = OrderForm(request.POST)
+            if order_form.is_valid():
+                order_form.save()
+                messages.success(request, "Order added successfully!")
+                return redirect('add_order.html')
+            else:
+                messages.error(request, "Error adding order. Please check the form")
+        else:
+            order_form = OrderForm()
+
+    else:
+        messages.error(request, "Please login to add orders")
+        return redirect('home')
+
+    total_delivered = Order.objects.filter(status='delivered').count()
+    total_pending = Order.objects.filter(status='pending').count()
+    customers_with_orders = Customer.objects.filter(order__isnull=False).distinct() 
+    orders = Order.objects.select_related('customer', 'product').all()
+            
+
+    context = {
+        'order_form': order_form,
+        'total_delivered': total_delivered,
+        'total_pending': total_pending,
+        'customers_with_orders': customers_with_orders,
+        'orders': orders,
+    }
+
+    return render(request, 'add_order.html', context) 
+
+def order_delete(request, pk):
+    if request.user.is_authenticated:
+        order = Customer.objects.get(id=pk)
+        order.delete()
+        messages.success(request, "Order deleted successfully!")
+        return redirect('home')
+    else:
+        messages.success(request, "Login to delete records..")
         return redirect('home')

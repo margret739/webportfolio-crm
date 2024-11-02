@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Customer, Agent
+from .models import Customer, Agent, Order, Product
 
 
 class SignUpForm(UserCreationForm):
@@ -64,3 +64,12 @@ class AddAgentForm(forms.ModelForm):
     class Meta:
         model = Agent
         exclude = ("user",)
+
+class OrderForm(forms.ModelForm):
+    customer = forms.ModelChoiceField(queryset=Customer.objects.all(), label="Customer")
+    product = forms.ModelChoiceField(queryset=Product.objects.all(), label="Product")
+    status = forms.ChoiceField(choices=[('pending', 'Pending'), ('delivered', 'Delivered')], label="Order Status")
+
+    class Meta:
+        model = Order
+        fields = ['customer', 'product', 'status']
