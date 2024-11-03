@@ -161,9 +161,9 @@ def agent_delete(request, agent_pk):
         messages.success(request, "Login to delete records..")
         return redirect('home')
 
-def agent_update(request, agent_pk):
+def agent_update(request, pk):
     if request.user.is_authenticated:
-        current_agent = Agent.objects.get(id=agent_pk)
+        current_agent = Agent.objects.get(id=pk)
         form = AddAgentForm(request.POST or None, instance=current_agent)
         if form.is_valid():
             form.save()
