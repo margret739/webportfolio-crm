@@ -215,12 +215,11 @@ def add_order(request):
             if order_form.is_valid():
                 order_form.save()
                 messages.success(request, "Order added successfully!")
-                return redirect('add_order.html')
+                return redirect('add_order')
             else:
                 messages.error(request, "Error adding order. Please check the form")
         else:
             order_form = OrderForm()
-
     else:
         messages.error(request, "Please login to add orders")
         return redirect('home')
